@@ -1,0 +1,30 @@
+  
+<launch>
+
+  <!-- Start navigation -->
+  <include file="$(find fetch_gazebo_demo)/launch/fetch_nav.launch" />
+
+  <!-- Start MoveIt -->
+  <include file="$(find fetch_moveit_config)/launch/move_group.launch" >
+    <arg name="info" value="true"/><!-- publish grasp markers -->
+    <arg name="allow_active_sensing" value="true"/>
+  </include>
+
+  <!-- Start Perception -->
+  <node name="basic_grasping_perception" pkg="simple_grasping" type="basic_grasping_perception" >
+    <!-- finger tips are 195mm from wrist_roll_link
+         fingers are 60mm deep -->
+    <param name="tool_offset" value="0.165" />
+    <param name="finger_depth" value="0.020" />
+    <param name="gripper/gripper_tolerance" value="0.05" />
+  </node>
+
+  <!-- Drive to the table, pick stuff up -->
+  <node name="demo" pkg="fetch_gazebo_demo" type="demo.py" output="screen" />
+  
+  <!-- Run Rviz and load the default config to see the state of the move_group node -->
+  <include file="$(find fetch_moveit_config)/launch/moveit_rviz.launch">
+    <arg name="config" value="true"/>
+  </include>
+
+</launch>
