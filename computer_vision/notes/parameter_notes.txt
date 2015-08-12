@@ -1,0 +1,4 @@
+For looking_down_circle.jpg 1.5 and 10 works to find the correct circle
+For level_circle.jpg 1.5 and 20 works to find correct circle
+For a streaming video of the red ball 1.9 and 80 works to find the correct circle
+For a streaming video of the block of wood with a circle drawn on it 1.2 and 70

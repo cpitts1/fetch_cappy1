@@ -20,11 +20,12 @@
   </node>
 
   <!-- Drive to the table, pick stuff up -->
-  <node name="demo" pkg="fetch_gazebo_demo" type="demo.py" output="screen" />
+  <node name="demo" pkg="fetch_cappy" type="testdemo.py" output="screen" />
   
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find fetch_moveit_config)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
   </include>
+
 
 </launch>

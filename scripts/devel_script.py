@@ -215,9 +215,9 @@ if __name__ == "__main__":
   
 
   # say the trajectory has now finished
-  finish_time = rospy.time.now()
-  while jl.last_data.header.time < finish_time:
-	rospy.sleep(0.1)
+  #finish_time = rospy.time.now()
+  #while jl.last_data.header.time < finish_time:
+  #	rospy.sleep(0.1)
 
   # at this point we are confident we have a new joint update since the trajectory came in
   

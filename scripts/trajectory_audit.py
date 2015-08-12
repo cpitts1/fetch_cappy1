@@ -205,3 +205,6 @@ if __name__ == "__main__":
    for n in range(num_waves):
      arm_goal[5] = arm_goal[5] + (-1)**n * 1.0
      t_sim.plan_to_jointspace_goal(arm_goal)
+
+
+

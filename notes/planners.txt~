@@ -1,0 +1,5 @@
+RRT-doesn't find a plan as frequently as default planner does-it still gets close to collision objects-paths seem to be no better or worse than default planner-still picked plans that were totally inefficient
+RRTConnect-doesn't seem to work any better than the default planner-very similar to RRT
+RRTstar-takes longer to plan than all of the other planners-seems to work better (trajectories move around less)-it still gets close to collision objects
+PRMstar-similar to RRTstar but it moves around more
+PRM-seems to flop around less than RRT but the star algorithms seem to work the best

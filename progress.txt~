@@ -1,0 +1,81 @@
+-Learned about CHOMP
+	-Read paper on CHOMP
+	-Talked with Matt about his paper
+
+-Reoriented myself with ROS and begin to learn about the Moveit! software
+	-Watched a few video tutorials
+
+-Examined the Fetch tutorial:
+	-Learned how to open rviz and gazebo
+	-Teleoped the robot around the playground environment
+	-Learned how to manipulate Fetch's environment by hand (not programatically)
+	-Checked out the demo code provided for traveling around the playground workspace
+	-Looked and played with the arm manipulation demo code
+	-Briefly checked out the head camera topics and the api documents
+	-Delved into the demo code and tried to see how ros was making it work-the comments on the 		 demo code can be seen in the cappy_demo file
+	-Created my own version of the demo code-made the robot pick up a block from other table
+
+-Examined how to create our own environment for the robot:
+	-Explored the Gazebo website
+	-Learned about how to insert Gazebo's models into the simulation environment
+	-Figured out how to insert a mesh (colloda file or sdf file) into an environment
+	-Looked at Google's 3D warehouse and the Sketchup software
+	-Made a few different building models using Gazebo's building editor and integrated one of 		 the newly created buildings into a world with Gazebo's premade models-the instructions for 		 this are enumerated in the fetch_gazebo folder in the NewWorldInstructions text file
+
+-Learned how to build a map for the robot so that it can navigate around a newly created environment
+	-Used the map_server to save a newly created map
+	-Integrated newly created map into the launch files-instructions for this can be found in the 		 fetch_navigation folder in a text file called InstructionsForMakingANewMap
+	-Navigated robot around new environment
+
+-Checked to see if the robot could pick up an object more complicated than a cube or sphere
+	-Tried to make robot pick up a bowl
+	-Looked at the ROS household objects database to try and find grasps for complicated objects
+
+-Tested to see how robust the map of the environment is
+	-Found that adding an object to be picked up that was not previously on the map is not a 		 problem-the robot will see it when you add a solid primitive to the scene
+	-Found that moving the surface the object is on is only a problem if you move the object to 		 be in the way of the normal path of the robot
+	-Found that when adding something like a cone to the scene the robot could get around the 		 cone with little to no problems-sometimes the robot would minorly bump the cone
+	-These results can be seen in the fetch_gazebo folder in the notes text file
+
+-Oriented myself to the mechanics of the real robot
+	-Read through the tutorials
+	-Attempted to callibrate the robot
+	-Used the joystick to navigate the robot around the room
+	-Created a map of the lab by navigating the robot around the room with the joystick
+	-Attempted to move the arm using rviz but something strange happened and the robot had to be 		 shut down
+	-Navigated the robot around the room using code instead of the joystick
+
+-Learned how to plan and view a trajectory and how to then execute said trajectory
+	-Learned more about the rviz MotionPlanning interface
+	-The PickPlaceInterface() and MoveGroupInterface() both have a plan_only function
+	-Used the result of the planned arm movement in the FollowTrajectoryClient from the original 		 demo Gazebo code
+	-Created an interface that would allow the user to choose whether they wanted to execute the 		 trajectory, quit the trajectory, or replan the trajectory
+	-This also works when specifying joint states for the robot instead of telling the robot to 		 pick up or place a specific object
+	
+-Learned more about rviz and how to visualize sensor information
+	-Examined the ROS octomap representation
+	-Learned how to integrate a sensor file for the robot
+	-Removed the MotionPlanning interface from rviz and replaced it with the RobotModel, Planning 		-Scene, and Trajectory interfaces
+	-Learned that if you set allow_active_sensing to 'True' then the robot will avoid obstacles 		 in its path that it can see with its camera
+	-Made the simulated robot lift its arm and wave where the wave functionality was executed 		 using only the FollowTrajectoryClient()
+	-Made a system that allowed us to check to see that the robot's actual last pose corresponded 		 to its planned last pose (i.e. did the robot actually finish executing the trajectory that 		 we think it did?)
+	-Learned about the robot state publisher
+
+-Made progress on planning and executing a trajectory in rviz
+	-Streamlined the code that previews trajectories for pick and place goals, joint goals, and 		 pose goals
+	-Tested the real robot's ability to perceive objects that aren't cubes, spheres, or cylinders
+	-Found that the robot was able to find grasps for more complicated objects; for example the 		 robot was able to find grasps for the joystick that controls the robot
+	
+-Ran pickup on actual robot
+	-Robot executed trajectory, barely missing the table, but it missed the object that we were 		 trying to make it pick up and then hit the table when it put its arm down to try and pick up 		 the object
+	-As a result of poor Moveit! execution we looked into the inverse kinematics of the robot
+
+
+
+
+
+
+
+
+
+
