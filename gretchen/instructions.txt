@@ -1,0 +1,41 @@
+This document describes the functionality offered by the files present
+in the directory 'gretchen'.  This document should be kept within /gretchen.
+
+The files in /gretchen offer a few general tools for using gretchen,
+and a couple task-specific scripts.
+
+gripper_interface_client.py contains an object that interfaces with the gripper controller.  If you want to send commands to the gripper, look at this file.
+
+move_base_client.py contains a base controller object that allows you to drive
+gretchen around her workspace.  Not much time was spent investigating 
+Gretchen's navigation capabilities, so please use this controller with caution.
+We had some trouble with mapping the workspace.
+
+move_torso_client.py is straightforward: it simply offers an object that 
+can move the torso up and down.
+
+plan_to_goal.py provides an object called TrajectoryGenerator that allows you
+to plan trajectories to move the arm to various goals.  It provides containers
+for end-effector pose goals, arm configuration goals, and gripper posture goals.
+To use TrajectoryGenerator, simply place your goal into one of the provided
+containers and feed this container to your TrajectoryGenerator instance.
+Make sure to set the optional parameter 'get_approval' to True if you want to 
+audit the generated trajectory in RVIZ before sending this trajectory to the execution
+module.
+
+trajectory_execution.py provides an object called TrajectoryExecutor to which you can pass
+a RobotTrajectory message.  TrajectoryExecutor is smart enought to figure out which controllers
+to use to execute this trajectory (the decision is made based on which joints are specified in 
+the RobotTrajectory message).  
+
+trajectory_audit.py is the developmental precursor to plan_to_goal.py.  It's contents are not 
+intended to be used; the script is retained because it has both sentimental and option value.
+
+push_button_demo/ is a directory that contains all the scripts needed to make Gretchen push 
+a button, given that the button location is known.  The contents of this folder were used to 
+make Gretchen push the elevator call button.
+
+floor_to_table.py is a use demonstration that instructs Gretchen to pick a block off of a table
+and put the block down in a user-specified location.
+
+
