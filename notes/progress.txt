@@ -98,6 +98,7 @@
 	-After this we tried to integrate much of what we'd been working on this summer and used the 		 torso controller, the head controller, the client that moves the base and the arm controller
 	-We found that perhaps because of a poorly constructed map Gretchen had a few significant 		 difficulties trying to move around the room-we were therefore only successful in raising 		 Gretchen's torso, tilting her head down, and picking up the block
 	-Created new map to adjust for the changes that have been made to the room
+	-This is a test
 
 
 
