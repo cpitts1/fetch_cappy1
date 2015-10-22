@@ -6,7 +6,7 @@
 	-Watched a few video tutorials
 
 -Examined the Fetch tutorial:
-	-Learned how to open rviz and gazebo
+	-Learned how to open rviz and Gazebo
 	-Teleoped the robot around the playground environment
 	-Learned how to manipulate Fetch's environment by hand (not programatically)
 	-Checked out the demo code provided for traveling around the playground workspace
@@ -85,7 +85,7 @@
 	-Learned about rosbag which allowed us to record video from the robot and then run cvbridge 		 on the recorded and saved video
 	-Found that the red rubber ball was a more reliable object to use when testing the techniques 		 for finding circles
 	-Found image_geometry interface which allowed me to find the image point in the camera frame
-	-Tested the points from the image frame-for the most part they correspond
+	-Tested the points from the image frame to see whether they seemed to be in the correct 	 place-for the most part they matched up but it was hard to tell where the camera frame was 		 initiating from
 	-Used TfListener.transformPoint and TfListener.waitForTransform to get point in the base_link 		 frame
 	-Drew a circle on a block of wood and attempted to make Gretchen tap the center of the circle 		 using the moveToPose() method from the MoveGroupInterface()
 	-Found that there was a problem where Gretchen wouldn't want to touch the block because this 		 would cause a collision and Gretchen wouldn't be able to come up with a plan
