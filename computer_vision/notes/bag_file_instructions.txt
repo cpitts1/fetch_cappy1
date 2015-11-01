@@ -1,5 +1,0 @@
-1) rosbag record head_camera/rgb/image_raw
-2) roslaunch export.launch
-3) mv ~/.ros/frame* .
-
-
