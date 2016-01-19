@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Program used with Fetch Robot to detect circle in frame
+# Author: Cappy Pitts
 import roslib
 import rospy
 import sys
@@ -80,7 +82,6 @@ class ros_cv_testing_node:
 	# Open up viewing windows
 	cv2.namedWindow('depth')
         cv2.namedWindow('rgb')
-        #cv2.namedWindow('combined')
 	
 	# Set up the class variables
         self.rgb_image = None
@@ -103,19 +104,19 @@ class ros_cv_testing_node:
         # Get height and width of image
         h = self.rgb_image.shape[0]
         w = self.rgb_image.shape[1]
-
+        
         # Create empty image
         color_dst = numpy.empty((h,w), 'uint8')
-
+	
         # Convert picture to grayscale
         cv2.cvtColor(self.rgb_image, cv2.COLOR_RGB2GRAY, color_dst)
 
         # Find circles given the camera image
-        dp = 1.2
-        minDist = 50
+        dp = 1.1
+        minDist = 90
 
         circles = cv2.HoughCircles(color_dst, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist)
-      
+ 
         # If no circles are detected then exit the program
         if circles == None:
             print "No circles found using these parameters"
@@ -136,16 +137,18 @@ class ros_cv_testing_node:
         for i in circles[0,:]:
             if i[1] == top_circ_y_coor:
                 # draw the center of the circle
-                cv2.circle(self.rgb_image,(i[0],i[1]),2,(0,0,255),3)
+                #cv2.circle(self.rgb_image,(i[0],i[1]),2,(0,0,255),3)
                 # draw outer circle
-                cv2.circle(self.rgb_image,(i[0],i[1]),i[2],(0,255,0),2)
+                #cv2.circle(self.rgb_image,(i[0],i[1]),i[2],(0,255,0),2)
                 x_coor = i[0]
                 y_coor = i[1]
 
+	cv2.circle(self.rgb_image,(327,247),2,(0,0,255),3)
 	# Set the coordinates for the center of the circle
         self.center = (x_coor, y_coor)
-
-        cv2.imshow('rgb', self.rgb_image)
+        #self.center = (328,248)
+        
+	cv2.imshow('rgb', self.rgb_image)
         cv2.waitKey(1)
     
     def on_depth(self, image):
@@ -188,7 +191,7 @@ class ros_cv_testing_node:
 	# Only use depth if it is close in time to the RGB image
         if time_since_rgb > rospy.Duration(0.5):
             rospy.loginfo('not using depth because time since RGB is ' + str(time_since_rgb))
-            return
+            #return
 
         # Find transform from camera frame to world frame
         self.tf_listener.waitForTransform(self.cam_model.tfFrame(), "base_link",
@@ -206,18 +209,10 @@ class ros_cv_testing_node:
         print "world frame coordinate:", self.return_point.point.x, \
             self.return_point.point.y,self.return_point.point.z, "\n"       
 
-        # Can uncomment to combine the images
-        '''
-	D = numpy.minimum(self.depth_image, 2.0) / 2.0
-        display = (self.rgb_image * D[:,:,None]).astype('uint8')
-        cv2.imshow('combined', display)
-        cv2.waitKey(1)
-	'''
 
-        # Publish point of button
 	self.point_pub.publish(self.return_point)
-
-    
+   
+ 
 if __name__ == "__main__":
     # Initialize node
     rospy.init_node('ros_cv_testing', anonymous=True)
