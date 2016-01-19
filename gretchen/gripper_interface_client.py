@@ -1,3 +1,7 @@
+# Authors: Daniel Palmer and Cappy Pitts
+# Program used to control the arm and gripper on Fetch
+
+# Import libraries and ROS packages
 import actionlib
 import copy
 import rospy

@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+# Written by: Daniel Palmer
 import sys
 import copy
 import rospy

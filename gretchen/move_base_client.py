@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+# Authors: Cappy Pitts and Daniel Palmer
+# Used to control the base of the Fetch robot
 
 import actionlib
 import rospy

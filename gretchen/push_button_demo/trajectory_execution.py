@@ -1,4 +1,7 @@
 #! /usr/bin/env python
+# Authors: Cappy Pitts and Daniel Palmer
+
+# This program will generate a trajectory based on a plan of execution
 
 import actionlib
 import rospy
@@ -17,7 +20,7 @@ class TrajectoryExecutor():
 
         self.arm_action = ArmInterfaceClient()
         self.gripper_action = GripperInterfaceClient()
-        self.arm_and_torso_action = ArmWithTorsoClient()
+        self.arm_and_torso_action = ArmAndTorsoClient()
         self.execution_monitor = ExecutionMonitor()
           
  
@@ -27,16 +30,16 @@ class TrajectoryExecutor():
         for trajectory in trajectories:
             self.current_trajectory_index += 1
             rospy.sleep(0.5)
-            num_commanded_joints = len(trajectory.joint_names)
+            num_commanded_joints = len(trajectory.joint_trajectory.joint_names)
             if num_commanded_joints is 7:
-               self.arm_action.execute_trajectory(trajectory)
+               self.arm_action.execute_trajectory(trajectory.joint_trajectory)
             elif num_commanded_joints is 2:
-               self.gripper_action.execute_trajectory(trajectory)
+               self.gripper_action.execute_trajectory(trajectory.joint_trajectory)
             elif num_commanded_joints is 8:
-               self.arm_and_torso_action.execute_trajectory(trajectory)
+               self.arm_and_torso_action.execute_trajectory(trajectory.joint_trajectory)
             else:
                print("No controller exists for planning group %s"
-                        %trajectory.joint_names)
+                        %trajectory.joint_trajectory.joint_names)
             if error_checking:
                execution_error = self.execution_monitor.verify_goal_achievement(trajectory.joint_trajectory)
                if execution_error:
@@ -68,7 +71,7 @@ class ArmInterfaceClient(object):
         self.believed_state = None
 
     def __state_listener_callback(self, state_data):
-          self.measured_state = state_data.position[5:13] 
+          self.measured_state = state_data.position[6:13] 
           
 
     def execute_trajectory(self, trajectory, duration=5.0):
@@ -122,55 +125,10 @@ class GripperInterfaceClient():
         self.client.wait_for_result()
 
             
-class ArmWithTorsoClient():
+class ArmAndTorsoClient():
   
     def __init__(self):
-        self.joint_names = ["torso_lift_joint", "shoulder_pan_joint", "shoulder_lift_joint",
-                   "upperarm_roll_joint", "elbow_flex_joint", 
-                    "forearm_roll_joint", "wrist_flex_joint",
-                     "wrist_roll_joint"]
-
-        self.client = actionlib.SimpleActionClient("arm_with_torso_controller/follow_joint_trajectory",
-                                                   FollowJointTrajectoryAction)
-        rospy.loginfo("Waiting for arm_controller...")
-        self.client.wait_for_server()
-        self.finish_time = rospy.Time(10000)
-        
-        self.state_listener = rospy.Subscriber('joint_states', JointState, self.__state_listener_callback)
-        self.most_recent_state = None
- 
-        self.measured_state = None
-        self.believed_state = None
-
-    def __state_listener_callback(self, state_data):
-          self.measured_state = state_data.position[6:13] 
-          
-
-    def execute_trajectory(self, trajectory, duration=5.0):
-        follow_goal = FollowJointTrajectoryGoal()
-        follow_goal.trajectory = trajectory
-        self.client.send_goal(follow_goal)
-        #rospy.sleep(1.5)
-        #self.client.cancel_goal()
-        self.client.wait_for_result()
-        self.finish_time = rospy.Time.now() 
-        self.believed_state = trajectory.points[-1].positions
-
-    def verify_goal_achievement(self):
-        joint_number = 0
-        for (i,j) in zip(self.measured_state, self.believed_state):
-            diff = subtract_angles(i, j)
-            if abs(diff) > .02:
-               rospy.loginfo('Diff: ' + str(diff))
-               rospy.loginfo('=============== Joint Goal NOT Achieved')
-               rospy.loginfo('=============== Current state is: ' + str(self.measured_state))
-               return False
-            else:
-               rospy.loginfo('Joint %d Goal Achieved' %(joint_number))
-               joint_number += 1
-        rospy.loginfo('=============== Goal Pose Achieved')
-        return True
-
+        pass
 
 class ExecutionMonitor():
 

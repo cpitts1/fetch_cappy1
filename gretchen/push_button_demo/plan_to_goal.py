@@ -1,7 +1,8 @@
 #! /usr/bin/env python
+# Authors: Cappy Pitts and Daniel Palmer
+# This program is used to plan and generate trajectories for the Fetch Robot
 
 #Importations
-
 import copy
 import rospy
 import sys
@@ -12,56 +13,6 @@ from moveit_python import MoveGroupInterface
 from moveit_msgs.msg import MoveItErrorCodes, RobotState
 from tf.transformations import quaternion_from_euler
 
-def main():
-    
-    ## Initalization ##
-
-    rospy.init_node("plan_to_goal")
-    trajectory_generator = TrajectoryGenerator()
-    trajectory_executor = TrajectoryExecutor()
-
-    ## Control Panel ##
-
-    #move_base.goto(0.5,0.0,0.0)
-    #torso_action.move_to([0.4, ])
-    #head_action.look_at(1.2, 0.0, 0.83, "map")
-
-    ## Goal Generation ##
-    # Joint Space Goal
-    motion_goals = []
-    a = JointSpaceGoal([0,0,0,0,0,0,0])
-    b = PoseGoal([0.7,0.1,0.6, 0,0,0])
-    x = JointSpaceGoal([0.0,0.0,0.0,-1.0,0.0,1.0,0.0])
-    motion_goals.append(a)
-    motion_goals.append(b)
-    motion_goals.append(x)
-
-    # EE pose goal
-
-   
-    ## Planning & Validation ##
-    goal_achieved = False
-    while not goal_achieved:
-        approved_trajectories = trajectory_generator.generate_trajectories(motion_goals, get_approval = True)
-        
-        ## Execution ##
-        execution_error = trajectory_executor.execute_trajectories(approved_trajectories, error_checking = True)
-        if execution_error:
-           replan = ask_for_replan()
-           if replan:
-              rospy.loginfo("Preparing to replan...")
-              trajectory_generator.clear_virtual_state()
-              current_trajectory_index = trajectory_executor.get_current_trajectory_index()
-              motion_goals = motion_goals[current_trajectory_index:]
-              rospy.loginfo("Replanning course from current state...")
-              continue
-           else:
-              rospy.loginfo("Aborting module...")
-              sys.exit()
-        else:
-           rospy.loginfo("Execution successful.")
-           goal_achieved = True
-       
 
 
 ## Goal Containers ##
@@ -153,8 +104,8 @@ class TrajectoryGenerator():
                    approved_trajectories += self.generate_trajectories(motion_goal, get_approval=True)
              except KeyError:
                 pass
-          approved_trajectories = copy.deepcopy(approved_trajectories)
-          return approved_trajectories
+          returnable_approved_trajectories = copy.deepcopy(approved_trajectories)
+          return returnable_approved_trajectories
 
 
       def get_user_approval(self):
@@ -199,7 +150,7 @@ class TrajectoryGenerator():
               if result.error_code.val == MoveItErrorCodes.SUCCESS:
                  print "================ Pose Achieved"
                  self.trajectory = result.planned_trajectory.joint_trajectory
-                 return result.planned_trajectory.joint_trajectory
+                 return result.planned_trajectory
 
       def plan_to_jointspace_goal(self, state):
           
@@ -210,12 +161,13 @@ class TrajectoryGenerator():
                      
           while not rospy.is_shutdown():
               result = self.group.moveToJointPosition(joints, state, plan_only=True,
-                                                     start_state=self.virtual_arm_state
-                                                     )
+                                                     start_state=self.virtual_arm_state,
+                                                     planner_id = "PRMkConfigDefault")
+                                                     
               if result.error_code.val == MoveItErrorCodes.SUCCESS:
                  print "============ Pose Achieved"
                  self.trajectory = result.planned_trajectory.joint_trajectory
-                 return result.planned_trajectory.joint_trajectory
+                 return result.planned_trajectory
 
       def plan_to_gripper_goal(self, posture):
           joints = ["l_gripper_finger_joint",
@@ -226,23 +178,23 @@ class TrajectoryGenerator():
               if result.error_code.val == MoveItErrorCodes.SUCCESS:
                  rospy.loginfo("Gripper Posture Plan Successful")
                  self.trajectory = result.planned_trajectory.joint_trajectory
-                 return result.planned_trajectory.joint_trajectory
+                 return result.planned_trajectory
 
       def update_virtual_state(self, trajectory):
           # Sets joint names and sets position to final position of previous trajectory 
-          if len(trajectory.points[-1].positions) == 7:
+          if len(trajectory.joint_trajectory.points[-1].positions) == 7:
              self.virtual_arm_state.joint_state.name = [
                                                         "shoulder_pan_joint",
                                 "shoulder_lift_joint", "upperarm_roll_joint",
                                   "elbow_flex_joint",   "forearm_roll_joint",
                                     "wrist_flex_joint",   "wrist_roll_joint"]
-             self.virtual_arm_state.joint_state.position = trajectory.points[-1].positions
+             self.virtual_arm_state.joint_state.position = trajectory.joint_trajectory.points[-1].positions
              rospy.loginfo("Virtual Arm State Updated")
              print self.virtual_arm_state.joint_state.position
 
-          elif len(trajectory.points[-1].positions) == 2:
+          elif len(trajectory.joint_trajectory.points[-1].positions) == 2:
                self.virtual_gripper_state.joint_state.name = ["l_gripper_finger_joint", "r_gripper_finger_joint"]
-               self.virtual_gripper_state.joint_state.position = trajectory.points[-1].positions
+               self.virtual_gripper_state.joint_state.position = trajectory.joint_trajectory.points[-1].positions
                rospy.loginfo("Virtual Gripper State Updated")
                print self.virtual_gripper_state.joint_state.position
   
@@ -262,5 +214,4 @@ class TrajectoryGenerator():
           virtual_gripper_state = copy.deepcopy(self.virtual_gripper_state)
           return virtual_gripper_state
 
-if __name__ == "__main__":
-   main()
+

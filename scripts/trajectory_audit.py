@@ -1,5 +1,6 @@
 #! /usr/bin/env python
- 
+# Early version of script used to audit trajectories 
+# Author Daniel Palmer
 
 import actionlib
 import numpy as np

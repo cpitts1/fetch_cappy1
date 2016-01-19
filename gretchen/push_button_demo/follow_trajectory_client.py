@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+# Authors: Cappy Pitts and Daniel Palmer
+# This will execute a given trajectory
 
 import actionlib
 import rospy

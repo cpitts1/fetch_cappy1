@@ -1,4 +1,7 @@
 #! /usr/bin/env python
+# Authors: Cappy Pitts and Daniel Palmer
+
+#Controls the torso of the Fetch Robot
 
 import actionlib
 import rospy

@@ -1,5 +1,7 @@
 #! /usr/bin/env python
- 
+# Author: Daniel Palmer and Cappy Pitts
+
+# This program allows the user to see their trajectory before it is executed 
 
 import actionlib
 import numpy as np
