@@ -1,0 +1,9 @@
+-Fetch has an SRDF in moveit_config/config but it also requires a URDF
+-URDF in fetch_description/robots
+-launch file that uses SRDF and URDF is in moveit_config/launch and is called planning_context.launch
+-fetch_description also has a folder with meshes for fetch and freight
+-links with helpful info on srdf and urdf:
+	-http://answers.gazebosim.org/question/62/sdf-vs-urdf-what-should-one-use/
+	-http://wiki.ros.org/srdf
+	-http://wiki.ros.org/urdf
+-
