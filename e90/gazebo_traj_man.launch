@@ -1,0 +1,24 @@
+<launch>
+
+  <arg name="robot" default="fetch"/>
+  <arg name="debug" default="false"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+
+  <!-- Start Gazebo with a blank world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Oh, you wanted a robot?
+  <include file="$(find fetch_gazebo)/launch/include/$(arg robot).launch.xml" /> -->
+  <include file="$(find fetch_cappy)/e90/fetch.launch.xml" />
+
+  <!-- Drive to the table, pick stuff up -->
+  <node name="simple_test" pkg="fetch_cappy" type="trajectory_manager.py" output="screen" />
+
+</launch>

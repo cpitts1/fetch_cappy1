@@ -1,11 +1,22 @@
+#!/usr/bin/env python
+# Author: Cappy Pitts
 import copy
 import actionlib
-import rospy
 import numpy
+import rospy
+
 from math import sin, cos
+from moveit_python import (MoveGroupInterface,
+                           PlanningSceneInterface,
+                           PickPlaceInterface)
+from moveit_python.geometry import rotate_pose_msg_by_euler_angles
 
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from control_msgs.msg import PointHeadAction, PointHeadGoal
+from grasping_msgs.msg import FindGraspableObjectsAction, FindGraspableObjectsGoal
 from geometry_msgs.msg import PoseStamped
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from moveit_msgs.msg import PlaceLocation, MoveItErrorCodes
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 # Send a trajectory to controller
@@ -35,8 +46,12 @@ class FollowTrajectoryClient(object):
         self.client.send_goal(follow_goal)
         self.client.wait_for_result()
 
+    def get_joint_position(self, filename):
+	data = numpy.genfromtxt(filename)
+	return data
 
 if __name__ == "__main__":
+
     # Create a node
     rospy.init_node("simple_test")
 
@@ -44,9 +59,14 @@ if __name__ == "__main__":
     while not rospy.Time.now():
         pass
 
-    # Setup clients
-    #TODO: change FollowTrajectoryClient to be correct thing
-    arm_action = FollowTrajectoryClient("torso_controller", ["torso_lift_joint"])
+    # Setup FollowTrajectoryClient
+    joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
+
+    arm_action = FollowTrajectoryClient("arm_controller/follow_joint_trajectory", joint_names)
+    #get the soint positions for the arm
+
+    trajectory = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
     
-    #TODO: fix this controller so that it works
-    arm_action.move_to([0.4, ])
+    #move to random trajectory
+    rospy.logwarn(trajectory[0])
+    arm_action.move_to(trajectory[0])
