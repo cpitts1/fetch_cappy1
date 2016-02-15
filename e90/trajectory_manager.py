@@ -63,10 +63,11 @@ if __name__ == "__main__":
     joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 
     arm_action = FollowTrajectoryClient("arm_controller/follow_joint_trajectory", joint_names)
-    #get the soint positions for the arm
-
+    
+    #get the joint positions for the arm
     trajectory = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
     
     #move to random trajectory
-    rospy.logwarn(trajectory[0])
-    arm_action.move_to(trajectory[0])
+    for i in range(len(trajectory)):
+	arm_action.move_to(list(trajectory[i]))
+
