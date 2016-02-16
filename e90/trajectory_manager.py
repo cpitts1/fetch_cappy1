@@ -19,20 +19,22 @@ class FollowTrajectoryClient(object):
         self.client.wait_for_server()
         self.joint_names = joint_names
 
-    def move_to(self, positions, velocities, accelerations, duration=5.0):
-    #def move_to(self, positions, duration=5.0):
-        if len(self.joint_names) != len(positions):
+    def move_to(self, positions, velocities, accelerations, delta_t):
+        if len(self.joint_names) != positions.shape[1]:
             print("Invalid trajectory position")
             return False
         trajectory = JointTrajectory()
         trajectory.joint_names = self.joint_names
-        trajectory.points.append(JointTrajectoryPoint())
-        trajectory.points[0].positions = positions
-        trajectory.points[0].velocities = velocities
-        #trajectory.points[0].velocities = [0.0 for _ in positions]
-        trajectory.points[0].accelerations = accelerations
-        #trajectory.points[0].accelerations = [0.0 for _ in positions]
-        trajectory.points[0].time_from_start = rospy.Duration(duration)
+
+        for i in range(positions.shape[0]): # for each row i
+            p = JointTrajectoryPoint()
+            p.positions = list(positions[i])
+            p.velocities = list(velocities[i])
+            p.accelerations = list(accelerations[i])
+            p.time_from_start = rospy.Duration(i * delta_t)
+            trajectory.points.append(p)
+
+
         follow_goal = FollowJointTrajectoryGoal()
         follow_goal.trajectory = trajectory
 
@@ -71,29 +73,13 @@ if __name__ == "__main__":
     
     #get the joint positions for the arm
     joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
-    delta_t = 1.0/len(joint_pos)
+    delta_t = 1.0/100
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
-    ''' 
-    pos_sides = []
-    vel_sides = []
-    accel_sides = []
-    delta_t = 4.0/len(joint_pos)
-    ticks = len(joint_pos)/4
-    length = len(joint_pos)
-    for i in range(4):
-        if i != 3:
-            pos_sides.append(joint_pos[(i*ticks):((i+1)*ticks)])
-        else:
-            pos_sides.append(joint_pos[(i*ticks):length])
-        vel_sides.append(difference(pos_sides[i],delta_t))
-        accel_sides.append(difference(vel_sides[i],delta_t))
-    joint_pos = numpy.vstack((pos_sides))
-    joint_vel = numpy.vstack((vel_sides))
-    joint_accel = numpy.vstack((accel_sides))
-    '''
-    #move to random trajectory
-    for i in range(len(joint_pos)):
-        print i
-	arm_action.move_to(list(joint_pos[i]), list(joint_vel[i]), list(joint_accel[i]))
-        #arm_action.move_to(list(joint_pos[i]))
+
+    rospy.loginfo('sleeping for 15')
+    rospy.sleep(15) 
+
+    rospy.loginfo('about to move_to')
+    arm_action.move_to(joint_pos, joint_vel, joint_accel, delta_t)
+    rospy.loginfo('did move_to')
