@@ -71,7 +71,10 @@ if __name__ == "__main__":
     
     #get the joint positions for the arm
     joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
-    
+    delta_t = 1.0/len(joint_pos)
+    joint_vel = difference(joint_pos,delta_t)
+    joint_accel = difference(joint_vel,delta_t)
+    ''' 
     pos_sides = []
     vel_sides = []
     accel_sides = []
@@ -88,8 +91,9 @@ if __name__ == "__main__":
     joint_pos = numpy.vstack((pos_sides))
     joint_vel = numpy.vstack((vel_sides))
     joint_accel = numpy.vstack((accel_sides))
-   
+    '''
     #move to random trajectory
     for i in range(len(joint_pos)):
+        print i
 	arm_action.move_to(list(joint_pos[i]), list(joint_vel[i]), list(joint_accel[i]))
-	#arm_action.move_to(list(joint_pos[i]))
+        #arm_action.move_to(list(joint_pos[i]))
