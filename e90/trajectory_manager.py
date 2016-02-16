@@ -1,22 +1,12 @@
 #!/usr/bin/env python
 # Author: Cappy Pitts
-import copy
 import actionlib
 import numpy
 import rospy
 
-from math import sin, cos
-from moveit_python import (MoveGroupInterface,
-                           PlanningSceneInterface,
-                           PickPlaceInterface)
-from moveit_python.geometry import rotate_pose_msg_by_euler_angles
-
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from control_msgs.msg import PointHeadAction, PointHeadGoal
-from grasping_msgs.msg import FindGraspableObjectsAction, FindGraspableObjectsGoal
 from geometry_msgs.msg import PoseStamped
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-from moveit_msgs.msg import PlaceLocation, MoveItErrorCodes
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 # Send a trajectory to controller
@@ -74,7 +64,7 @@ if __name__ == "__main__":
     # Setup FollowTrajectoryClient
     joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 
-    arm_action = FollowTrajectoryClient("arm_controller/follow_joint_trajectory", joint_names)
+    arm_action = FollowTrajectoryClient("arm_controller", joint_names)
     
     #get the joint positions for the arm
     joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
