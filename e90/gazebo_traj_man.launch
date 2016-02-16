@@ -17,4 +17,6 @@
   <!-- Oh, you wanted a robot? -->
   <include file="$(find fetch_cappy)/e90/fetch.launch.xml" />
 
+  <node name="trajectory_manager" pkg="fetch_cappy" type="trajectory_manager.py" output="screen" />
+
 </launch>
