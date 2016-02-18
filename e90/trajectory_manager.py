@@ -20,9 +20,7 @@ class FollowTrajectoryClient(object):
         self.joint_names = joint_names
 
     def move_to(self, positions, velocities, accelerations, delta_t):
-        if len(self.joint_names) != positions.shape[1]:
-            print("Invalid trajectory position")
-            return False
+        assert(len(self.joint_names) == positions.shape[1])
         trajectory = JointTrajectory()
         trajectory.joint_names = self.joint_names
 
@@ -69,17 +67,20 @@ if __name__ == "__main__":
     # Setup FollowTrajectoryClient
     joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 
+    rospy.loginfo("Subscribing to FollowTrajectoryClient")
     arm_action = FollowTrajectoryClient("arm_controller", joint_names)
     
     #get the joint positions for the arm
+    rospy.loginfo("Getting positions, accelerations, and velocities")
     joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
-    delta_t = 1.0/100
+    #safe is probably 1/10
+    delta_t = 1.0/50
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
+    
+    rospy.loginfo('Sleeping for 2')
+    rospy.sleep(2) 
 
-    rospy.loginfo('sleeping for 15')
-    rospy.sleep(15) 
-
-    rospy.loginfo('about to move_to')
+    rospy.loginfo('About to move end effector')
     arm_action.move_to(joint_pos, joint_vel, joint_accel, delta_t)
-    rospy.loginfo('did move_to')
+    rospy.loginfo('Completed motion')

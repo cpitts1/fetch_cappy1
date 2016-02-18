@@ -29,7 +29,7 @@
 # Author: Michael Ferguson
 
 import sys
-
+import numpy
 import rospy
 import actionlib
 from control_msgs.msg import (FollowJointTrajectoryAction,
@@ -41,8 +41,11 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 arm_joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint",
               "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 arm_intermediate_positions  = [1.32, 0, -1.4, 1.72, 0.0, 1.66, 0.0]
-#arm_joint_positions  = [1.32, 1.40, -0.2, 1.72, 0.0, 1.66, 0.0]
-arm_joint_positions = [-0.0655542, 0.772407, -0.115827, -1.69561, -0.0136329, 0.971001, -0.00876119]
+
+data = numpy.genfromtxt('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
+
+#arm_joint_positions = [-0.0655542, 0.772407, -0.115827, -1.69561, -0.0136329, 0.971001, -0.00876119]
+arm_joint_positions = list(data[0])
 
 head_joint_names = ["head_pan_joint", "head_tilt_joint"]
 head_joint_positions = [0.0, 0.0]
