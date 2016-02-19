@@ -45,7 +45,8 @@ arm_intermediate_positions  = [1.32, 0, -1.4, 1.72, 0.0, 1.66, 0.0]
 data = numpy.genfromtxt('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
 
 #arm_joint_positions = [-0.0655542, 0.772407, -0.115827, -1.69561, -0.0136329, 0.971001, -0.00876119]
-arm_joint_positions = list(data[0])
+#arm_joint_positions = list(data[0])
+arm_joint_positions = [0] * 7
 
 head_joint_names = ["head_pan_joint", "head_tilt_joint"]
 head_joint_positions = [0.0, 0.0]

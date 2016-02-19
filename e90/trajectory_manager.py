@@ -43,6 +43,28 @@ class FollowTrajectoryClient(object):
 	data = numpy.genfromtxt(filename)
 	return data
 
+    def move_to_initial(self, positions, duration):    
+
+        assert(len(self.joint_names) == len(positions))
+        trajectory = JointTrajectory()
+        trajectory.joint_names = self.joint_names
+
+        p = JointTrajectoryPoint()
+        p.positions = positions
+
+        p.time_from_start = rospy.Duration(duration)
+        trajectory.points.append(p)
+
+        follow_goal = FollowJointTrajectoryGoal()
+        follow_goal.trajectory = trajectory
+
+        self.client.send_goal(follow_goal)
+        self.client.wait_for_result()
+
+    def get_joint_position(self, filename):
+	data = numpy.genfromtxt(filename)
+	return data
+
 # f'(x) ~ (-3*f(x) + f(x+h) - f(x+2*h)) / (2*h)
 def three_point_forward(x0, x1, x2, h):
     return (-3.0*x0 + 4.0*x1 - x2)/(2.0*h)
@@ -61,8 +83,8 @@ if __name__ == "__main__":
     rospy.init_node("trajectory_manager")
 
     # Make sure sim time is working
-    while not rospy.Time.now():
-        pass
+    #while not rospy.Time.now():
+    #pass
 
     # Setup FollowTrajectoryClient
     joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
@@ -74,12 +96,15 @@ if __name__ == "__main__":
     rospy.loginfo("Getting positions, accelerations, and velocities")
     joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
     #safe is probably 1/10
-    delta_t = 1.0/50
+    delta_t = 1.0/20
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
     
     rospy.loginfo('Sleeping for 2')
     rospy.sleep(2) 
+
+    rospy.loginfo('Move to start position')
+    arm_action.move_to_initial(list(joint_pos[0]), 5.0)
 
     rospy.loginfo('About to move end effector')
     arm_action.move_to(joint_pos, joint_vel, joint_accel, delta_t)
