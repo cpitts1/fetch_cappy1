@@ -79,6 +79,8 @@ def difference(a, h):
 
 if __name__ == "__main__":
 
+    # TODO: add command line arguments for what trajectory should be executed
+
     # Create a node
     rospy.init_node("trajectory_manager")
 
