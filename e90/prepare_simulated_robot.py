@@ -42,8 +42,7 @@ arm_joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_j
               "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 arm_intermediate_positions  = [1.32, 0, -1.4, 1.72, 0.0, 1.66, 0.0]
 
-data = numpy.genfromtxt('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
-
+#data = numpy.genfromtxt('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/textfiles/square.txt')
 #arm_joint_positions = [-0.0655542, 0.772407, -0.115827, -1.69561, -0.0136329, 0.971001, -0.00876119]
 #arm_joint_positions = list(data[0])
 arm_joint_positions = [0] * 7

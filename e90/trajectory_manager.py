@@ -3,7 +3,7 @@
 import actionlib
 import numpy
 import rospy
-
+import sys
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from control_msgs.msg import PointHeadAction, PointHeadGoal
 from geometry_msgs.msg import PoseStamped
@@ -79,7 +79,13 @@ def difference(a, h):
 
 if __name__ == "__main__":
 
-    # TODO: add command line arguments for what trajectory should be executed
+    # Get command line arguments or print usage and exit
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    else:
+        progname = os.path.basename(sys.argv[0])
+        print >> sys.stderr, 'usage: '+progname+' filename'
+        sys.exit(1)
 
     # Create a node
     rospy.init_node("trajectory_manager")
@@ -96,11 +102,17 @@ if __name__ == "__main__":
     
     #get the joint positions for the arm
     rospy.loginfo("Getting positions, accelerations, and velocities")
-    joint_pos = arm_action.get_joint_position('/home/cpitts1/catkin_ws/src/fetch_cappy/e90/example.txt')
+    filename = '/home/cpitts1/catkin_ws/src/fetch_cappy/e90/textfiles/'+filename
+    joint_pos = arm_action.get_joint_position(filename)
     #safe is probably 1/10
     delta_t = 1.0/20
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
+
+    #joint_pos_zero = list(joint_pos[0])
+    #for i in joint_pos_zero:
+    #if abs(joint_pos_zero) > abs(something)+.1 or abs(joint_pos_zero) < abs(something)+.1:
+    #sys.exit(1)
     
     rospy.loginfo('Sleeping for 2')
     rospy.sleep(2) 
