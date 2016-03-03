@@ -4,10 +4,50 @@ import actionlib
 import numpy
 import rospy
 import sys
+from sensor_msgs.msg import JointState
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from control_msgs.msg import PointHeadAction, PointHeadGoal
 from geometry_msgs.msg import PoseStamped
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+
+################################################################################
+
+# This class subscribes to a topic one time while all of the other topics are 
+# publishing and subscribing an infinite number of times
+class get_single_helper:
+
+    def __init__(self, topic, msg_type, timeout=rospy.Duration(30)):
+        self.topic = topic
+        self.sub = rospy.Subscriber(topic, msg_type, self.callback)
+        self.data = None
+        self.timeout = timeout
+
+    def callback(self, data):
+        self.data = data
+
+    def run(self):
+
+        start = rospy.Time.now()
+        rospy.loginfo('waiting for ' + self.topic + '...')
+
+        while (rospy.Time.now() - start) < self.timeout:
+            if self.data is not None:
+                rospy.loginfo('got it!')
+                break
+            rospy.sleep(rospy.Duration(0.5))
+
+        if self.data is None:
+            msg = 'did not get data in time for topic ' + self.topic
+            rospy.logerror(msg)
+            raise RuntimeError(msg)
+
+        return self.data
+
+def get_single(topic, msg_type, timeout=rospy.Duration(30)):
+
+    h = get_single_helper(topic, msg_type, timeout)
+    return h.run()
+
 
 # Send a trajectory to controller
 class FollowTrajectoryClient(object):
@@ -90,10 +130,6 @@ if __name__ == "__main__":
     # Create a node
     rospy.init_node("trajectory_manager")
 
-    # Make sure sim time is working
-    #while not rospy.Time.now():
-    #pass
-
     # Setup FollowTrajectoryClient
     joint_names = ["shoulder_pan_joint", "shoulder_lift_joint", "upperarm_roll_joint", "elbow_flex_joint", "forearm_roll_joint", "wrist_flex_joint", "wrist_roll_joint"]
 
@@ -109,17 +145,25 @@ if __name__ == "__main__":
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
 
-    #joint_pos_zero = list(joint_pos[0])
-    #for i in joint_pos_zero:
-    #if abs(joint_pos_zero) > abs(something)+.1 or abs(joint_pos_zero) < abs(something)+.1:
-    #sys.exit(1)
+    # Get information for this particular camera
+   
+    joint_info = get_single('/joint_states', JointState)
+    true_pos = list(joint_info.position[6:13])
+    joint_pos_zero = list(joint_pos[0])
+    print "Robot's true position:", true_pos
+    print "Intended start position:", joint_pos_zero
+    for i in range(len(joint_pos_zero)):
+        if abs(joint_pos_zero[i]) > (abs(true_pos[i])+.1) or abs(joint_pos_zero[i]) < (abs(true_pos[i])-.1):
+    	    print rospy.logwarn("Too far from actual start state")
+	    sys.exit(1)
+    
     
     rospy.loginfo('Sleeping for 2')
     rospy.sleep(2) 
 
     rospy.loginfo('Move to start position')
-    arm_action.move_to_initial(list(joint_pos[0]), 5.0)
+    arm_action.move_to_initial(list(joint_pos[0]), 6.0)
 
-    rospy.loginfo('About to move end effector')
+    rospy.loginfo('Moving end effector')
     arm_action.move_to(joint_pos, joint_vel, joint_accel, delta_t)
     rospy.loginfo('Completed motion')
