@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from copy import copy
 
 def main():
-    joint_pos = numpy.genfromtxt('textfiles/to_tuck.txt')
-    delta_t = 1.0/20 # measured in seconds
+    joint_pos = numpy.genfromtxt('textfiles/rrt.txt')
+    delta_t = 1.0/15 # measured in seconds
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
 

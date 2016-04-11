@@ -141,7 +141,7 @@ if __name__ == "__main__":
     filename = '/home/cpitts1/catkin_ws/src/fetch_cappy/e90/textfiles/'+filename
     joint_pos = arm_action.get_joint_position(filename)
     #safe is probably 1/10
-    delta_t = 1.0/20
+    delta_t = 1.0/15
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
 
@@ -149,14 +149,16 @@ if __name__ == "__main__":
     joint_info = get_single('/joint_states', JointState)
     true_pos = list(joint_info.position[6:13])
     joint_pos_zero = list(joint_pos[0])
+    #print joint_info
     print "Robot's joint names:", joint_info.name[6:13]
     print "Robot's true position:", true_pos
     print "Intended start position:", joint_pos_zero
+  
     for i in range(len(joint_pos_zero)):
         if abs(joint_pos_zero[i]) > (abs(true_pos[i])+.1) or abs(joint_pos_zero[i]) < (abs(true_pos[i])-.1):
     	    print rospy.logwarn("Too far from actual start state")
 	    sys.exit(1)
-    
+   
     rospy.loginfo('Sleeping for 2')
     rospy.sleep(2) 
 
