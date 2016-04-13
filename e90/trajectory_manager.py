@@ -141,7 +141,7 @@ if __name__ == "__main__":
     filename = '/home/cpitts1/catkin_ws/src/fetch_cappy/e90/textfiles/'+filename
     joint_pos = arm_action.get_joint_position(filename)
     #safe is probably 1/10
-    delta_t = 1.0/15
+    delta_t = 1.0/20
     joint_vel = difference(joint_pos,delta_t)
     joint_accel = difference(joint_vel,delta_t)
 

@@ -19,6 +19,6 @@
   </include>
 
   <!-- Oh, you wanted a robot? -->
-  <include file="$(find fetch_gazebo)/launch/include/$(arg robot).launch.xml" />
+  <include file="$(find fetch_cappy)/e90/fetch.launch.xml" />
 
 </launch>

@@ -30,6 +30,7 @@
           </box>
         </geometry>
       </visual>
+      <gravity>1</gravity>
     </link>
   </model>
 </sdf>

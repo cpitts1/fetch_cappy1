@@ -8,14 +8,9 @@
       <uri>model://sun</uri>
     </include>
     <include>
-      <uri>model://demo_cube</uri>
-      <name>box1</name>
-      <pose>4.05 3 0 0 0 1.57</pose>
-    </include>
-    <include>
       <uri>model://test_box</uri>
       <name>box2</name>
-      <pose>2.05 3 0 0 0 1.57</pose>
+      <pose>1.0 -.75 .5 0 0 0</pose>
     </include>
   </world>
   </world>
