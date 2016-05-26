@@ -10,7 +10,7 @@
     <include>
       <uri>model://test_box</uri>
       <name>box2</name>
-      <pose>1.0 -.75 .5 0 0 0</pose>
+      <pose>.7 -.4 .34 0 0 0</pose>
     </include>
   </world>
   </world>
